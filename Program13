@@ -1,0 +1,60 @@
+Given an unsorted array of alphabets containing duplicate 
+elements. Design an algorithm and implement it using a program to find 
+which alphabet has maximum number of occurrences and 
+print it
+
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_ALPHABETS 26
+
+// Function to find the alphabet with the maximum number of occurrences
+void findMaxOccurrence(char arr[], int n) {
+    // Initialize an array to count the occurrences of each alphabet
+    int freq[MAX_ALPHABETS] = {0};
+
+    // Traverse the array and count occurrences
+    for (int i = 0; i < n; i++) {
+        if (arr[i] >= 'a' && arr[i] <= 'z') {
+            freq[arr[i] - 'a']++;
+        } else if (arr[i] >= 'A' && arr[i] <= 'Z') {
+            freq[arr[i] - 'A']++;
+        }
+    }
+
+    // Find the alphabet with the maximum occurrence
+    int maxFreq = 0;
+    char maxChar = '\0';
+    
+    for (int i = 0; i < MAX_ALPHABETS; i++) {
+        if (freq[i] > maxFreq) {
+            maxFreq = freq[i];
+            maxChar = (char)(i + 'a');  // Convert index back to character
+        }
+    }
+
+    // Print the result
+    printf("The alphabet with the maximum number of occurrences is: %c\n", maxChar);
+    printf("It occurs %d times.\n", maxFreq);
+}
+
+int main() {
+    int n;
+
+    // Input the size of the array
+    printf("Enter the number of elements in the array: ");
+    scanf("%d", &n);
+
+    char arr[n];
+
+    // Input the elements of the array
+    printf("Enter %d alphabets:\n", n);
+    for (int i = 0; i < n; i++) {
+        scanf(" %c", &arr[i]);  // " " before %c to handle newline characters
+    }
+
+    // Find and print the alphabet with the maximum number of occurrences
+    findMaxOccurrence(arr, n);
+
+    return 0;
+}
