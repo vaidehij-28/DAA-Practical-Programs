@@ -1,0 +1,49 @@
+Given an array of nonnegative integers, design an algorithm and 
+a program to count the number of pairs of integers such that their 
+difference is equal to a given key, K. 
+
+#include <stdio.h>
+
+#define MAX 10001  // Assuming max value in array <= 10000
+
+int main() {
+    int n, K, i;
+    int arr[1000];        // You can adjust size if needed
+    int freq[MAX] = {0};  // Frequency array initialized to 0
+    int count = 0;
+
+    // Input array size
+    printf("Enter size of array: ");
+    scanf("%d", &n);
+
+    // Input array elements
+    printf("Enter %d nonnegative integers:\n", n);
+    for (i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+        freq[arr[i]]++;  // Build frequency map
+    }
+
+    // Input key (difference)
+    printf("Enter key (difference value): ");
+    scanf("%d", &K);
+
+    // Count pairs
+    if (K == 0) {
+        for (i = 0; i < MAX; i++) {
+            if (freq[i] > 1) {
+                count += (freq[i] * (freq[i] - 1)) / 2;  // nC2 pairs
+            }
+        }
+    } else {
+        for (i = 0; i < MAX - K; i++) {
+            if (freq[i] > 0 && freq[i + K] > 0) {
+                count += freq[i] * freq[i + K];
+            }
+        }
+    }
+
+    // Output result
+    printf("Number of pairs with difference %d: %d\n", K, count);
+
+    return 0;
+}
