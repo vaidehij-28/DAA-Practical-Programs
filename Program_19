@@ -1,0 +1,111 @@
+. After end term examination, Akshay wants to party with his 
+friends. All his friends are living as paying guest and it has been decided 
+to first gather at Akshay’s house and then move towards party location. 
+The problem is that no one knows the exact address of his house in the 
+city. Akshay as a computer science wizard knows how to apply his theory 
+subjects in his real life and came up with an amazing idea to help his 
+friends. He draws a graph by looking in to location of his house and his 
+friends’ location (as a node in the graph) on a map. He wishes to find out 
+shortest distance and path covering that distance from each of his 
+friend’s location to his house and then whatsapp them this path so that 
+they can reach his house in minimum time. Akshay has developed the 
+program that implements Dijkstra’s algorithm but not sure about 
+correctness of results. Can you also implement the same algorithm and 
+2023-24 and 2024-25 onwards 
+verify the correctness of Akshay’s results? (Hint: Print shortest path and 
+distance from friends’ location to Akshay’s house) 
+
+#include <stdio.h>
+#include <limits.h>
+
+#define MAX_VERTICES 100
+#define INF INT_MAX
+
+// Function to find the vertex with the minimum distance value
+int minDistance(int dist[], bool visited[], int V) {
+    int min = INF, min_index;
+    
+    for (int v = 0; v < V; v++) {
+        if (!visited[v] && dist[v] <= min) {
+            min = dist[v];
+            min_index = v;
+        }
+    }
+    return min_index;
+}
+
+// Function to implement Dijkstra's algorithm
+void dijkstra(int graph[MAX_VERTICES][MAX_VERTICES], int V, int src, int dist[], int prev[]) {
+    bool visited[V];
+    
+    // Initialize all distances as infinite and visited as false
+    for (int i = 0; i < V; i++) {
+        dist[i] = INF;
+        visited[i] = false;
+        prev[i] = -1;  // No previous node initially
+    }
+    
+    dist[src] = 0;  // Distance to source is 0
+    
+    // Find the shortest path for all vertices
+    for (int count = 0; count < V - 1; count++) {
+        int u = minDistance(dist, visited, V);  // Pick the minimum distance vertex from the set of vertices
+        visited[u] = true;  // Mark the vertex as visited
+        
+        // Update the distance value of the adjacent vertices
+        for (int v = 0; v < V; v++) {
+            if (!visited[v] && graph[u][v] != 0 && dist[u] != INF && dist[u] + graph[u][v] < dist[v]) {
+                dist[v] = dist[u] + graph[u][v];
+                prev[v] = u;
+            }
+        }
+    }
+}
+
+// Function to print the shortest path
+void printPath(int prev[], int j) {
+    if (prev[j] == -1) {
+        return;
+    }
+    printPath(prev, prev[j]);
+    printf(" -> %d", j);
+}
+
+int main() {
+    int V;  // Number of vertices
+    printf("Enter the number of vertices: ");
+    scanf("%d", &V);
+
+    int graph[MAX_VERTICES][MAX_VERTICES];  // Adjacency matrix for graph
+
+    // Input the adjacency matrix (graph representation)
+    printf("Enter the adjacency matrix (0 for no edge, positive integers for edge weights):\n");
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++) {
+            scanf("%d", &graph[i][j]);
+            if (graph[i][j] == 0) {
+                graph[i][j] = INF;  // No path between i and j
+            }
+        }
+    }
+
+    int friends[V];  // Stores the index of Akshay's house and friends' locations
+    int src;  // Akshay's house (source for shortest path)
+    
+    printf("Enter the index of Akshay's house: ");
+    scanf("%d", &src);
+
+    // Dijkstra's algorithm for each friend's location
+    for (int i = 0; i < V; i++) {
+        int dist[V], prev[V];
+        dijkstra(graph, V, i, dist, prev);
+        
+        // Output the shortest path and distance from the friend's location to Akshay's house
+        printf("Shortest path from friend %d to Akshay's house %d is: ", i, src);
+        printf("%d", src);
+        printPath(prev, i);
+        printf("\nDistance: %d\n", dist[i]);
+    }
+    
+    return 0;
+}
