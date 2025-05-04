@@ -1,0 +1,63 @@
+Given an unsorted array of integers, design an algorithm and 
+implement it using a program to find whether two elements exist such 
+that their sum is equal to the given key element. 
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Function to compare two integers (for sorting purposes)
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+// Function to find if two elements sum up to the given key
+int findPairWithSum(int arr[], int n, int key) {
+    // Sort the array
+    qsort(arr, n, sizeof(int), compare);
+
+    int low = 0;
+    int high = n - 1;
+
+    // Use two-pointer technique to find the pair
+    while (low < high) {
+        int sum = arr[low] + arr[high];
+
+        if (sum == key) {
+            printf("Pair found: %d + %d = %d\n", arr[low], arr[high], key);
+            return 1;  // Return 1 if a pair is found
+        } else if (sum < key) {
+            low++;  // Move the low pointer to the right to increase the sum
+        } else {
+            high--;  // Move the high pointer to the left to decrease the sum
+        }
+    }
+
+    return 0;  // Return 0 if no pair is found
+}
+
+int main() {
+    int n, key;
+
+    // Input the size of the array
+    printf("Enter the number of elements in the array: ");
+    scanf("%d", &n);
+
+    int arr[n];
+
+    // Input the elements of the array
+    printf("Enter %d integers:\n", n);
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    // Input the key element
+    printf("Enter the key element: ");
+    scanf("%d", &key);
+
+    // Call the function to find if the pair exists
+    if (!findPairWithSum(arr, n, key)) {
+        printf("No pair found with the given sum %d.\n", key);
+    }
+
+    return 0;
+}
