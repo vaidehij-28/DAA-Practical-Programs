@@ -1,0 +1,89 @@
+Design an algorithm and implement it using a program to solve 
+previous question's problem using Bellman- Ford's shortest path 
+algorithm.
+
+#include <stdio.h>
+#include <limits.h>
+
+#define MAX_VERTICES 100
+#define INF INT_MAX
+
+// Function to implement Bellman-Ford algorithm
+void bellmanFord(int graph[MAX_VERTICES][MAX_VERTICES], int V, int src, int dist[], int prev[]) {
+    // Initialize the distance array
+    for (int i = 0; i < V; i++) {
+        dist[i] = INF;
+        prev[i] = -1;
+    }
+    dist[src] = 0;
+
+    // Relax all edges (V-1) times
+    for (int i = 1; i < V; i++) {
+        for (int u = 0; u < V; u++) {
+            for (int v = 0; v < V; v++) {
+                // If there is an edge and the distance can be updated
+                if (graph[u][v] != INF && dist[u] != INF && dist[u] + graph[u][v] < dist[v]) {
+                    dist[v] = dist[u] + graph[u][v];
+                    prev[v] = u;
+                }
+            }
+        }
+    }
+
+    // Check for negative weight cycles
+    for (int u = 0; u < V; u++) {
+        for (int v = 0; v < V; v++) {
+            if (graph[u][v] != INF && dist[u] != INF && dist[u] + graph[u][v] < dist[v]) {
+                printf("Graph contains negative weight cycle\n");
+                return;
+            }
+        }
+    }
+}
+
+// Function to print the path from the source to the destination
+void printPath(int prev[], int j) {
+    if (prev[j] == -1) {
+        return;
+    }
+    printPath(prev, prev[j]);
+    printf(" -> %d", j);
+}
+
+int main() {
+    int V;  // Number of vertices
+    printf("Enter the number of vertices: ");
+    scanf("%d", &V);
+
+    int graph[MAX_VERTICES][MAX_VERTICES];  // Adjacency matrix for graph
+
+    // Input the adjacency matrix (graph representation)
+    printf("Enter the adjacency matrix (0 for no edge, positive integers for edge weights):\n");
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++) {
+            scanf("%d", &graph[i][j]);
+            if (graph[i][j] == 0) {
+                graph[i][j] = INF;  // No path between i and j
+            }
+        }
+    }
+
+    int src;  // Akshay's house (source for shortest path)
+    
+    printf("Enter the index of Akshay's house: ");
+    scanf("%d", &src);
+
+    // Bellman-Ford algorithm for each friend's location
+    for (int i = 0; i < V; i++) {
+        int dist[V], prev[V];
+        bellmanFord(graph, V, i, dist, prev);
+        
+        // Output the shortest path and distance from the friend's location to Akshay's house
+        printf("Shortest path from friend %d to Akshay's house %d is: ", i, src);
+        printf("%d", src);
+        printPath(prev, i);
+        printf("\nDistance: %d\n", dist[i]);
+    }
+    
+    return 0;
+}
