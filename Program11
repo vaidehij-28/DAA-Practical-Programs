@@ -1,0 +1,88 @@
+Given an unsorted array of integers, design an algorithm and 
+implement it using a program to sort an array of elements by partitioning 
+the array into two subarrays based on a pivot element such that one of 
+the sub array holds values smaller than the pivot element while another 
+sub array holds values greater than the pivot element. Pivot element 
+should be selected randomly from the array. Your program should also 
+find number of comparisons and swaps required for sorting the array.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int comparisons = 0;  // Track number of comparisons
+int swaps = 0;        // Track number of swaps
+
+// Function to swap two elements
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+    swaps++;
+}
+
+// Function to randomly select a pivot and partition the array
+int partition(int arr[], int low, int high) {
+    // Choose a random pivot index
+    int pivotIndex = low + rand() % (high - low + 1);
+    swap(&arr[pivotIndex], &arr[high]); // Move pivot to end
+    int pivot = arr[high];
+    
+    int i = low - 1;
+    for (int j = low; j < high; j++) {
+        comparisons++;
+        if (arr[j] <= pivot) {
+            i++;
+            swap(&arr[i], &arr[j]);
+        }
+    }
+    swap(&arr[i + 1], &arr[high]);
+    return i + 1;
+}
+
+// QuickSort function to recursively sort the array
+void quickSort(int arr[], int low, int high) {
+    if (low < high) {
+        // Partition the array and get pivot index
+        int pivotIndex = partition(arr, low, high);
+
+        // Recursively sort the subarrays
+        quickSort(arr, low, pivotIndex - 1);
+        quickSort(arr, pivotIndex + 1, high);
+    }
+}
+
+int main() {
+    int n;
+
+    // Input array size
+    printf("Enter the size of the array: ");
+    scanf("%d", &n);
+
+    int arr[n];
+
+    // Input array elements
+    printf("Enter %d integers:\n", n);
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    // Seed the random number generator
+    srand(time(NULL));
+
+    // Perform QuickSort
+    quickSort(arr, 0, n - 1);
+
+    // Output sorted array
+    printf("Sorted array:\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    // Output comparisons and swaps
+    printf("Total comparisons: %d\n", comparisons);
+    printf("Total swaps: %d\n", swaps);
+
+    return 0;
+}
