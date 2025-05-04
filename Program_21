@@ -1,0 +1,83 @@
+Given a directed graph with two vertices ( source and destination). 
+Design an algorithm and implement it using a program to find the weight 
+of the shortest path from source to destination with exactly k edges on 
+the path. 
+
+#include <stdio.h>
+#include <limits.h>
+
+#define MAX_VERTICES 100
+#define INF INT_MAX
+
+// Function to find the shortest path with exactly k edges
+void shortestPathWithKEdges(int graph[MAX_VERTICES][MAX_VERTICES], int V, int source, int destination, int k) {
+    int dp[MAX_VERTICES][k+1]; // dp[u][i] = shortest distance to u with exactly i edges
+
+    // Initialize dp table
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j <= k; j++) {
+            dp[i][j] = INF;
+        }
+    }
+
+    // Distance from source to source with 0 edges is 0
+    dp[source][0] = 0;
+
+    // Dynamic programming to fill the dp table
+    for (int i = 1; i <= k; i++) {
+        for (int u = 0; u < V; u++) {
+            for (int v = 0; v < V; v++) {
+                if (graph[u][v] != INF && dp[u][i-1] != INF) {  // If there is an edge and u is reachable
+                    dp[v][i] = (dp[v][i] < dp[u][i-1] + graph[u][v]) ? dp[v][i] : dp[u][i-1] + graph[u][v];
+                }
+            }
+        }
+    }
+
+    // The result is in dp[destination][k]
+    if (dp[destination][k] == INF) {
+        printf("No path exists from %d to %d with exactly %d edges\n", source, destination, k);
+    } else {
+        printf("The weight of the shortest path from %d to %d with exactly %d edges is: %d\n", source, destination, k, dp[destination][k]);
+    }
+}
+
+int main() {
+    int V, E, source, destination, k;
+
+    // Input number of vertices and edges
+    printf("Enter number of vertices: ");
+    scanf("%d", &V);
+
+    int graph[MAX_VERTICES][MAX_VERTICES];
+
+    // Initialize graph as INF
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++) {
+            graph[i][j] = INF;
+        }
+    }
+
+    // Input edges and weights
+    printf("Enter number of edges: ");
+    scanf("%d", &E);
+    printf("Enter edges (u, v, weight):\n");
+    for (int i = 0; i < E; i++) {
+        int u, v, weight;
+        scanf("%d %d %d", &u, &v, &weight);
+        graph[u][v] = weight;  // Directed graph, u -> v with weight
+    }
+
+    // Input source, destination and k
+    printf("Enter source vertex: ");
+    scanf("%d", &source);
+    printf("Enter destination vertex: ");
+    scanf("%d", &destination);
+    printf("Enter number of edges (k): ");
+    scanf("%d", &k);
+
+    // Call the function to find the shortest path with exactly k edges
+    shortestPathWithKEdges(graph, V, source, destination, k);
+
+    return 0;
+}
