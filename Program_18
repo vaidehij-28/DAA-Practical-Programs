@@ -1,0 +1,86 @@
+III. Given a directed graph, design an algorithm and implement it 
+using a program to find whether cycle exists in the graph or not. 
+ 
+Input Format: 
+Input will be the graph in the form of adjacency matrix or adjacency list. 
+ 
+Output Format: 
+Output will be 'Yes Cycle Exists' if cycle exists otherwise print 'No Cycle 
+Exists'.
+
+
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX_VERTICES 100
+
+int main() {
+    int V; // Number of vertices in the graph
+    printf("Enter the number of vertices: ");
+    scanf("%d", &V);
+
+    int adjMatrix[MAX_VERTICES][MAX_VERTICES];
+
+    // Input the adjacency matrix
+    printf("Enter the adjacency matrix (0 for no edge, 1 for edge):\n");
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++) {
+            scanf("%d", &adjMatrix[i][j]);
+        }
+    }
+
+    // Arrays to keep track of visited vertices and recursion stack
+    bool visited[MAX_VERTICES];
+    bool recStack[MAX_VERTICES]; // To track nodes in the current DFS path
+
+    // Initialize the visited and recursion stack arrays
+    for (int i = 0; i < V; i++) {
+        visited[i] = false;
+        recStack[i] = false;
+    }
+
+    bool cycleFound = false;
+
+    // Function to perform DFS and check for cycles
+    for (int i = 0; i < V; i++) {
+        // If the vertex is not visited, perform DFS
+        if (!visited[i]) {
+            // Perform DFS from vertex i
+            visited[i] = true;
+            recStack[i] = true;
+
+            // Check for cycle using DFS
+            for (int j = 0; j < V; j++) {
+                // If there is an edge from i to j
+                if (adjMatrix[i][j] == 1) {
+                    // If j is not visited, continue DFS
+                    if (!visited[j]) {
+                        visited[j] = true;
+                        recStack[j] = true;
+                    }
+                    // If j is in the recursion stack, a cycle is found
+                    else if (recStack[j] == true) {
+                        cycleFound = true;
+                        break;
+                    }
+                }
+            }
+
+            // Backtrack from the current node in the recursion stack
+            recStack[i] = false;
+
+            if (cycleFound) {
+                break;
+            }
+        }
+    }
+
+    // Output result
+    if (cycleFound) {
+        printf("Yes Cycle Exists\n");
+    } else {
+        printf("No Cycle Exists\n");
+    }
+
+    return 0;
+}
