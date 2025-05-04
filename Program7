@@ -1,0 +1,56 @@
+Given an unsorted array of integers, design an algorithm and a 
+program to sort the array using insertion sort. Your program should be 
+able to find number of comparisons and shifts ( shifts - total number of 
+times the array elements are shifted from their place) required for sorting 
+the array. 
+
+#include <stdio.h>
+
+int main() {
+    int n, i, j, key;
+    int arr[1000];  // Change size as needed
+    int comparisons = 0;
+    int shifts = 0;
+
+    // Input array size
+    printf("Enter the size of the array: ");
+    scanf("%d", &n);
+
+    // Input array elements
+    printf("Enter %d integers:\n", n);
+    for (i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    // Insertion Sort
+    for (i = 1; i < n; i++) {
+        key = arr[i];
+        j = i - 1;
+
+        while (j >= 0) {
+            comparisons++;
+            if (arr[j] > key) {
+                arr[j + 1] = arr[j];  // Shift
+                shifts++;
+                j--;
+            } else {
+                break;
+            }
+        }
+        arr[j + 1] = key;  // Insert key
+        shifts++;  // For placing key into its position
+    }
+
+    // Output sorted array
+    printf("Sorted array:\n");
+    for (i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    // Output comparisons and shifts
+    printf("Total comparisons: %d\n", comparisons);
+    printf("Total shifts: %d\n", shifts);
+
+    return 0;
+}
