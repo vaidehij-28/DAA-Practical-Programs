@@ -1,0 +1,79 @@
+Given an unsorted array of integers, design an algorithm and 
+implement it using a program to find Kth smallest or largest element in 
+the array. (Worst case Time Complexity = O(n))
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+// Function to swap two elements
+void swap(int* a, int* b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+// Partition function to partition the array based on a pivot
+int partition(int arr[], int low, int high) {
+    // Choose a random pivot
+    int pivotIndex = low + rand() % (high - low + 1);
+    swap(&arr[pivotIndex], &arr[high]); // Move pivot to the end
+
+    int pivot = arr[high];
+    int i = low - 1;
+
+    for (int j = low; j < high; j++) {
+        if (arr[j] <= pivot) {
+            i++;
+            swap(&arr[i], &arr[j]);
+        }
+    }
+
+    swap(&arr[i + 1], &arr[high]);
+    return i + 1;
+}
+
+// QuickSelect function to find the Kth smallest element
+int quickSelect(int arr[], int low, int high, int K) {
+    if (low <= high) {
+        int pivotIndex = partition(arr, low, high);
+
+        if (pivotIndex == K) {
+            return arr[pivotIndex];
+        } else if (pivotIndex < K) {
+            return quickSelect(arr, pivotIndex + 1, high, K);
+        } else {
+            return quickSelect(arr, low, pivotIndex - 1, K);
+        }
+    }
+    return -1; // This should not happen if K is valid
+}
+
+int main() {
+    int n, K;
+
+    // Input array size and the Kth element to find
+    printf("Enter the size of the array: ");
+    scanf("%d", &n);
+    printf("Enter the value of K (Kth smallest element): ");
+    scanf("%d", &K);
+
+    int arr[n];
+
+    // Input array elements
+    printf("Enter %d integers:\n", n);
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    // Seed the random number generator for random pivot selection
+    srand(time(NULL));
+
+    // Find the Kth smallest element (Kth smallest means K-1 index in zero-based indexing)
+    int kthElement = quickSelect(arr, 0, n - 1, K - 1);
+
+    // Output the Kth smallest element
+    printf("The %dth smallest element is: %d\n", K, kthElement);
+
+    return 0;
+}
